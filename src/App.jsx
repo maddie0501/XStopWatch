@@ -1,45 +1,50 @@
-import { useState, useEffect } from "react";
-import "./App.css";
+import { useState, useEffect } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
+  const [count, setCount] = useState(0); 
+  const [isRunning, setIsRunning] = useState(false);  
+
 
   useEffect(() => {
+    let intervalId;
+
     if (isRunning) {
-      const id = setInterval(() => {
+      intervalId = setInterval(() => {
         setCount((prevCount) => prevCount + 1);
-      }, 1000);  // keeps running every sec until stopped 
+      }, 1000);
+    } else {
 
-      setIntervalId(id);
-
-      return () => clearInterval(id); // reset it or stop it at given interval
+      clearInterval(intervalId);
     }
+
+
+    return () => clearInterval(intervalId);
   }, [isRunning]);
 
-  const handleClick = () => {
-    setIsRunning((prev) => !prev);
+  
+  const handleToggle = () => {
+    setIsRunning((prevState) => !prevState);
   };
 
   const handleReset = () => {
-    setCount(0);
-    setIsRunning(false);
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
+    setCount(0); 
   };
+
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${minutes}:${sec < 10 ? "0" : ""}${sec}`;
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
   };
 
   return (
     <div>
       <h1>Stopwatch</h1>
-      <p>Time: {formatTime(count)}</p>
-      <button onClick={handleClick}>{count ? "Stop" : "Start"}</button>
+      <h3>Time: {formatTime(count)}</h3>
+      <button onClick={handleToggle}>
+        {isRunning ? 'Stop' : 'Start'}
+      </button>
       <button onClick={handleReset}>Reset</button>
     </div>
   );
